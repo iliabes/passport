@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 //DB Config
 const db = require('./config/keys').mongoURI
 
-// Connect tomongo
+// Connect to mongo
 mongoose.connect(db, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => {console.log('mongoDb connected')})
     .catch(e => {console.log(e)})
@@ -19,7 +19,6 @@ app.set("view engine", "ejs");
 
 
 //bodyparser
-
 app.use(express.urlencoded({extended:false}))
 
 //Routes
