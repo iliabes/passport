@@ -13,7 +13,7 @@ mongoose.connect(db, {useNewUrlParser: true, useUnifiedTopology: true})
     .catch(e => {console.log(e)})
 
 
-//EJS
+//EJSь д
 app.use(expressLayout)
 app.set("view engine", "ejs");
 
