@@ -1,7 +1,9 @@
 const express = require('express');
-const User = require('../models/User');
 const router = express.Router();
 const bcrypt = require('bcryptjs')
+const passport = require('passport');
+const User = require('../models/User');
+
 
 
 
@@ -12,6 +14,7 @@ router.use('/login',(req,res) => {
 
 
 router.post('/register', (req, res) => {
+ 
   const { name, email, password, password2 } = req.body;
   let errors = [];
 
@@ -27,6 +30,7 @@ router.post('/register', (req, res) => {
   }
 
   if (errors.length > 0) {
+    console.log('erooeows'+errors[0].msg)
     res.render('register', {
       errors,
       name,
@@ -35,27 +39,45 @@ router.post('/register', (req, res) => {
       password2
     });
   } else {
+      console.log('else'+name,email)
       User.findOne({email : email})
-      .then( user => {
-        if(user){
-          errors.push({msg: 'Emai is alredy registered'});
-          res.render('register', {
-            errors,
-            name,
-            email,
-            password,
-            password2
+        .then( user => {
+          console.log('mongouser'+user)
+           if(user){
+            console.log(user)
+             errors.push({msg: 'Emai is alredy registered'});
+             res.render('register', {
+              errors,
+              name,
+              email,
+              password,
+              password2
           });
         }else{
+          console.log('asd')
           const newUser = User({
-            name:name,
-            email:email,
-            password:password
+            name,
+            email,
+            password
+          })
+
+          bcrypt.genSalt(10,(err,salt)=>{
+            if(err) throw err;
+            bcrypt.hash(newUser.password,salt,(err,hash)=>{
+              newUser.password = hash;
+              console.log(newUser)
+              newUser.save()
+                .then(user => {
+                  req.flash('success_msg',"you are registered")
+                  res.redirect('/users/login')
+                })
+                .catch(err => console.log(err))
+            })
           })
         }
       })
   }
-  console.log(errors)
+  console.log('errors'+errors)
 });
 
 //register
