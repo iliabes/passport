@@ -1,4 +1,4 @@
-const passport = require('passport-local').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const User = require('../models/User')
@@ -10,6 +10,7 @@ module.exports = function(passport){
             //match user
             User.findOne({email:email})
                 .then(user => {
+                    console.log( user)
                     if(!user){
                         return done(null,false,{message:'That emeil is not regitred'})
                     }
@@ -23,6 +24,16 @@ module.exports = function(passport){
                     })
                 })
                 .catch(err => console.log(err))
-        }})
-    )
+                
+                passport.serializeUser((user, done)=> {
+                    done(null, user.id);
+                  });
+                  
+                  passport.deserializeUser((id, done)=> {
+                    User.findById(id, (err, user)=> {
+                      done(err, user);
+                    });
+                  });
+        }))
 }
+

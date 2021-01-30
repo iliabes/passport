@@ -1,10 +1,21 @@
+//flesh messges
+//login
+//ejs # -
+
+
 const express = require('express')
 const expressLayout = require('express-ejs-layouts')
-const app = express();
 const ejsLint = require('ejs-lint');
 const mongoose = require('mongoose');
-const session = require('express-session')
 const flash = require('connect-flash');
+const session = require('express-session')
+
+const passport = require('passport')
+
+const app = express();
+
+
+require('./config/passport')(passport)
 
 //DB Config
 const db = require('./config/keys').mongoURI
@@ -28,15 +39,21 @@ app.use(session({
     secret: 'secret',
     resave: true,
     saveUninitialized: true,
-  }))
+}))
 
+//passport init
+app.use(passport.initialize());
+app.use(passport.session());
+  
 //connect flash
 app.use(flash())
+
 
 //global vars
 app.use((req,res,next) => {
     res.locals.success_msg = req.flash('success-msg')
     res.locals.error_msg = req.flash('error-msg')
+    res.locals.error = req.flash('error')
     next()
 })
 

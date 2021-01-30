@@ -6,15 +6,15 @@ const User = require('../models/User');
 
 
 
+// Login Page
+router.get('/login',  (req, res) => res.render('login'));
 
-//login
-router.use('/login',(req,res) => {
-    res.render('login');
-})
+// Register Page
+router.get('/register',  (req, res) => res.render('register'));
 
 
 router.post('/register', (req, res) => {
- 
+  
   const { name, email, password, password2 } = req.body;
   let errors = [];
 
@@ -69,6 +69,7 @@ router.post('/register', (req, res) => {
               newUser.save()
                 .then(user => {
                   req.flash('success_msg',"you are registered")
+                  console.log('message flesh is'+ req.flash('success-msg'))
                   res.redirect('/users/login')
                 })
                 .catch(err => console.log(err))
@@ -78,15 +79,27 @@ router.post('/register', (req, res) => {
       })
   }
   console.log('errors'+errors)
+  console.log('message flesh is2'+ req.flash('success-msg'))
 });
 
-//register
-router.get('/register',(req,res) => {
-    console.log('reg')
-    res.render('register');
+
+//login
+router.post('/login',(req,res,next) => {
+  console.log('login')
+  passport.authenticate('local',{
+    successRedirect: '/dashboard',
+    failureRedirect: '/user/login',
+    failureFlash: true
+  })(req,res,next )
 })
 
-//register Handle
+
+//logout
+router.get('/logout',(req,res) => {
+  req.logout();
+  req.flash("succes_msg",'You are log out ');
+  res.redirect('./users/login')
+})
 
 
 module.exports = router;

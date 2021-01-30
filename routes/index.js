@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const { ensureAuthefication } = require('../config/auth');
 
 
-
-
-router.use('/dash',(req,res) => {
-    res.render('dashbord');
+router.use('/dashboard', ensureAuthefication ,(req,res) => {
+    console.log('req.user'+req.user)
+    res.render('dashbord',{
+        name: req.user.name
+    });
 })
 
 //login
@@ -14,8 +16,6 @@ router.use('/',(req,res) => {
 })
 
 
-
-//register
 
 
 
